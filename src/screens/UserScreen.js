@@ -7,7 +7,7 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet, Platform} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
@@ -17,15 +17,31 @@ const UserScreen = () => {
   const [location, setLocation] = useState(null);
 
   const handleLocationPermission = async () => {
-    const permissionCheck = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+    let permissionCheck = '';
+    if (Platform.OS === 'ios') {
+      permissionCheck = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
 
-    if (permissionCheck === RESULTS.DENIED) {
-      const permissionRequest = await request(
-        PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-      );
-      permissionRequest === RESULTS.GRANTED
-        ? console.warn('Location permission granted.')
-        : console.warn('Location perrmission denied.');
+      if (permissionCheck === RESULTS.DENIED) {
+        const permissionRequest = await request(
+          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        );
+        permissionRequest === RESULTS.GRANTED
+          ? console.warn('Location permission granted.')
+          : console.warn('Location perrmission denied.');
+      }
+    }
+
+    if (Platform.OS === 'android') {
+      permissionCheck = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+
+      if (permissionCheck === RESULTS.DENIED) {
+        const permissionRequest = await request(
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        );
+        permissionRequest === RESULTS.GRANTED
+          ? console.warn('Location permission granted.')
+          : console.warn('Location perrmission denied.');
+      }
     }
   };
 
@@ -51,6 +67,7 @@ const UserScreen = () => {
       <StatusBar barStyle="dark-content" />
       {location && (
         <MapView
+          testID="map"
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
