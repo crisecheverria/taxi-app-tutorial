@@ -13,6 +13,9 @@ target 'taxiApp' do
   # React Native Permissions
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+
+  # React Native Vector Icons
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   
   config = use_native_modules!
 
