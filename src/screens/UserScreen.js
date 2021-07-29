@@ -16,8 +16,9 @@ import {customStyleMap} from '../styles';
 import DepartureInformation from '../components/DepartureInformation';
 import Geocoder from 'react-native-geocoding';
 import {usePlace} from '../context/PlacesManager';
+import {GOOGLE_MAPS_API_KEY} from '../utils/constants';
 
-Geocoder.init('AIzaSyBIKI2eDOD-F01tsJ2bz_CF3QD6WJ_zJ1E', {language: 'en'});
+Geocoder.init(GOOGLE_MAPS_API_KEY, {language: 'en'});
 
 const Container = styled.SafeAreaView`
   flex: 1;
