@@ -1,3 +1,5 @@
+import styled from 'styled-components/native';
+
 export const customStyleMap = [
   {
     elementType: 'geometry',
@@ -159,3 +161,24 @@ export const customStyleMap = [
     ],
   },
 ];
+
+export const BookNow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
+`;
+
+export const BookNowButton = styled.TouchableOpacity`
+  align-items: center;
+  background-color: #f4e22c;
+  padding: 10px;
+  border-radius: 20px;
+  width: 100%;
+  margin-left: auto;
+`;
+
+export const ButtonText = styled.Text`
+  font-weight: bold;
+  font-size: 15px;
+`;
