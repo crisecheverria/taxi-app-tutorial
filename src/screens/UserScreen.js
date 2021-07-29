@@ -7,14 +7,30 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Platform} from 'react-native';
+import {StatusBar, Platform} from 'react-native';
+import styled from 'styled-components/native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
 import {customStyleMap} from '../styles';
+import DepartureInformation from '../components/DepartureInformation';
+import Geocoder from 'react-native-geocoding';
+import {usePlace} from '../context/PlacesManager';
+
+Geocoder.init('AIzaSyBIKI2eDOD-F01tsJ2bz_CF3QD6WJ_zJ1E', {language: 'en'});
+
+const Container = styled.SafeAreaView`
+  flex: 1;
+  background-color: #fff;
+`;
+
+const mapContainer = {
+  flex: 7,
+};
 
 const UserScreen = () => {
   const [location, setLocation] = useState(null);
+  const {place, dispatchPlace} = usePlace();
 
   const handleLocationPermission = async () => {
     let permissionCheck = '';
@@ -53,22 +69,41 @@ const UserScreen = () => {
     Geolocation.getCurrentPosition(
       position => {
         const {latitude, longitude} = position.coords;
-        setLocation({latitude, longitude});
+        Geocoder.from({
+          latitude: latitude,
+          longitude: longitude,
+        }).then(res => {
+          const {
+            formatted_address,
+            place_id,
+            geometry: {
+              location: {lat, lng},
+            },
+          } = res.results[0];
+          setLocation({latitude, longitude});
+          dispatchPlace({
+            type: 'SET_CURRENT_PLACE',
+            description: formatted_address,
+            placeId: place_id,
+            latitude: lat,
+            longitude: lng,
+          });
+        });
       },
       error => {
         console.log(error.code, error.message);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
-  }, []);
+  }, [dispatchPlace]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Container>
       <StatusBar barStyle="dark-content" />
       {location && (
         <MapView
           testID="map"
-          style={styles.map}
+          style={mapContainer}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
             latitude: location.latitude,
@@ -87,18 +122,9 @@ const UserScreen = () => {
           loadingBackgroundColor="#242f3e"
         />
       )}
-    </SafeAreaView>
+      <DepartureInformation />
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-});
 
 export default UserScreen;
