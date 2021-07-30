@@ -7,7 +7,7 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {StatusBar, Platform} from 'react-native';
+import {StatusBar, Platform, Image} from 'react-native';
 import styled from 'styled-components/native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
@@ -17,6 +17,7 @@ import DepartureInformation from '../components/DepartureInformation';
 import Geocoder from 'react-native-geocoding';
 import {usePlace} from '../context/PlacesManager';
 import {GOOGLE_MAPS_API_KEY} from '../utils/constants';
+import marker from '../assets/icons-marker.png';
 
 Geocoder.init(GOOGLE_MAPS_API_KEY, {language: 'en'});
 
@@ -27,6 +28,19 @@ const Container = styled.SafeAreaView`
 
 const mapContainer = {
   flex: 7,
+};
+
+const FixedMarker = styled.View`
+  left: 50%;
+  margin-left: -16px;
+  margin-top: -125px;
+  position: absolute;
+  top: 50%;
+`;
+
+const markerStyle = {
+  height: 36,
+  width: 36,
 };
 
 const UserScreen = () => {
@@ -98,6 +112,29 @@ const UserScreen = () => {
     );
   }, [dispatchPlace]);
 
+  const onRegionChange = ({latitude, longitude}) => {
+    Geocoder.from({
+      latitude,
+      longitude,
+    }).then(res => {
+      const {
+        formatted_address,
+        place_id,
+        geometry: {
+          location: {lat, lng},
+        },
+      } = res.results[0];
+
+      dispatchPlace({
+        type: 'SET_CURRENT_PLACE',
+        description: formatted_address,
+        placeId: place_id,
+        latitude: lat,
+        longitude: lng,
+      });
+    });
+  };
+
   return (
     <Container>
       <StatusBar barStyle="dark-content" />
@@ -112,6 +149,7 @@ const UserScreen = () => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          onRegionChangeComplete={onRegionChange}
           showsUserLocation={true}
           customMapStyle={customStyleMap}
           paddingAdjustmentBehavior="automatic"
@@ -123,6 +161,11 @@ const UserScreen = () => {
           loadingBackgroundColor="#242f3e"
         />
       )}
+
+      <FixedMarker testID="fixed-marker">
+        <Image style={markerStyle} source={marker} />
+      </FixedMarker>
+
       <DepartureInformation />
     </Container>
   );
