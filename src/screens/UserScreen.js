@@ -12,7 +12,8 @@ import styled from 'styled-components/native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
-import {customStyleMap} from '../styles';
+import {customStyleMap, MenuButtonLeft} from '../styles';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import DepartureInformation from '../components/DepartureInformation';
 import Geocoder from 'react-native-geocoding';
 import {usePlace} from '../context/PlacesManager';
@@ -43,7 +44,7 @@ const markerStyle = {
   width: 36,
 };
 
-const UserScreen = () => {
+const UserScreen = ({navigation}) => {
   const [location, setLocation] = useState(null);
   const {place, dispatchPlace} = usePlace();
 
@@ -134,6 +135,18 @@ const UserScreen = () => {
       });
     });
   };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <MenuButtonLeft
+          onPress={() => navigation.navigate('Menu')}
+          testID="modal-menu">
+          <FeatherIcon name="menu" size={25} color="#000" />
+        </MenuButtonLeft>
+      ),
+    });
+  }, [navigation]);
 
   return (
     <Container>

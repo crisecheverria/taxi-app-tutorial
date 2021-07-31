@@ -182,3 +182,21 @@ export const ButtonText = styled.Text`
   font-weight: bold;
   font-size: 15px;
 `;
+
+export const SignInButtonText = styled.Text`
+  font-weight: bold;
+  font-size: 15px;
+`;
+
+export const SignInButton = styled.TouchableOpacity`
+  align-items: center;
+  background-color: #f4e22c;
+  padding: 10px;
+  border-radius: 20px;
+  width: 100%;
+  margin-left: auto;
+`;
+
+export const MenuButtonLeft = styled.TouchableOpacity`
+  margin-left: 5px;
+`;
