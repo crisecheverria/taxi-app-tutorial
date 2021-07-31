@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, waitFor} from '@testing-library/react-native';
+import {render, waitFor, act} from '@testing-library/react-native';
 import UserScreen from '../UserScreen';
 import {check} from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
@@ -16,10 +16,14 @@ describe('<UserScreen />', () => {
     },
   };
   const dispatchPlace = jest.fn();
+  const navigation = {
+    setOptions: jest.fn(),
+  };
+
   test('should renders MapView and Marker with user current location', async () => {
     const {getByTestId} = render(
       <PlaceContext.Provider value={{place, dispatchPlace}}>
-        <UserScreen />
+        <UserScreen navigation={navigation} />
       </PlaceContext.Provider>,
     );
 
@@ -31,6 +35,24 @@ describe('<UserScreen />', () => {
         longitude: 11.93,
       });
       expect(getByTestId('map')).toBeDefined();
+    });
+  });
+
+  test('should have called Context Providers', async () => {
+    render(
+      <PlaceContext.Provider value={{place, dispatchPlace}}>
+        <UserScreen navigation={navigation} />
+      </PlaceContext.Provider>,
+    );
+
+    await act(() => Promise.resolve());
+
+    expect(dispatchPlace).toHaveBeenCalledWith({
+      type: 'SET_CURRENT_PLACE',
+      description: 'Lindholmen',
+      placeId: 'abc',
+      latitude: 57.7,
+      longitude: 11.93,
     });
   });
 });
