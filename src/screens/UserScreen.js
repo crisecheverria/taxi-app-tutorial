@@ -19,6 +19,8 @@ import Geocoder from 'react-native-geocoding';
 import {usePlace} from '../context/PlacesManager';
 import {GOOGLE_MAPS_API_KEY} from '../utils/constants';
 import marker from '../assets/icons-marker.png';
+import BookingInformation from '../components/BookingInformation';
+import {useShowState} from '../hooks';
 
 Geocoder.init(GOOGLE_MAPS_API_KEY, {language: 'en'});
 
@@ -47,6 +49,7 @@ const markerStyle = {
 const UserScreen = ({navigation}) => {
   const [location, setLocation] = useState(null);
   const {place, dispatchPlace} = usePlace();
+  const [showBooking, toggleShowBookingViews] = useShowState(false);
 
   const handleLocationPermission = async () => {
     let permissionCheck = '';
@@ -179,7 +182,11 @@ const UserScreen = ({navigation}) => {
         <Image style={markerStyle} source={marker} />
       </FixedMarker>
 
-      <DepartureInformation />
+      {showBooking ? (
+        <BookingInformation />
+      ) : (
+        <DepartureInformation toggleShowBookingViews={toggleShowBookingViews} />
+      )}
     </Container>
   );
 };
