@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components/native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {formatPlaceName} from '../utils';
 import {usePlace} from '../context/PlacesManager';
 import {useShowState} from '../hooks';
+import SearchAddressModal from './SearchAddressModal';
 
 const Container = styled.View`
   flex: 1.5;
@@ -53,39 +54,49 @@ export default function BookingInformation() {
     place: {currentPlace, destinationPlace},
   } = usePlace();
   const [isModalVisible, togglePlaceModal] = useShowState();
+  const [newAddress, setNewAddress] = useState(null);
 
   return (
-    <Container>
-      <Location>
-        <FeatherIcon name="map-pin" size={15} color="gray" />
-        <Text testID="current-place-description">
-          {formatPlaceName(currentPlace.description)}
-        </Text>
-      </Location>
+    <>
+      <Container>
+        <Location>
+          <FeatherIcon name="map-pin" size={15} color="gray" />
+          <Text testID="current-place-description">
+            {formatPlaceName(currentPlace.description)}
+          </Text>
+        </Location>
 
-      <FeatherIcon
-        name="more-vertical"
-        size={15}
-        color="gray"
-        marginTop={-10}
+        <FeatherIcon
+          name="more-vertical"
+          size={15}
+          color="gray"
+          marginTop={-10}
+        />
+
+        <Location>
+          <FeatherIcon name="more-vertical" size={15} color="gray" />
+          <LocationPlaceholder testID="destination-label">
+            Destination address
+          </LocationPlaceholder>
+        </Location>
+
+        <LocationPressable onPress={togglePlaceModal}>
+          <FeatherIcon name="circle" size={15} color="gray" />
+          <AddDestinationText testID="destination-place-description">
+            {formatPlaceName(destinationPlace.description) || 'Add destination'}
+          </AddDestinationText>
+          <TextRight>
+            <FeatherIcon name="search" size={15} color="#000" />
+          </TextRight>
+        </LocationPressable>
+      </Container>
+
+      <SearchAddressModal
+        isModalVisible={isModalVisible}
+        toggleModal={togglePlaceModal}
+        newAddress={newAddress}
+        setNewAddress={setNewAddress}
       />
-
-      <Location>
-        <FeatherIcon name="more-vertical" size={15} color="gray" />
-        <LocationPlaceholder testID="destination-label">
-          Destination address
-        </LocationPlaceholder>
-      </Location>
-
-      <LocationPressable onPress={togglePlaceModal}>
-        <FeatherIcon name="circle" size={15} color="gray" />
-        <AddDestinationText testID="destination-place-description">
-          {formatPlaceName(destinationPlace.description) || 'Add destination'}
-        </AddDestinationText>
-        <TextRight>
-          <FeatherIcon name="search" size={15} color="#000" />
-        </TextRight>
-      </LocationPressable>
-    </Container>
+    </>
   );
 }
