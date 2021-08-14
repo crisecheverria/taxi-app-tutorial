@@ -1,8 +1,11 @@
-import React from 'react';
-import {StatusBar, TextInput} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {StatusBar, TextInput, FlatList} from 'react-native';
 import styled from 'styled-components/native';
 import Modal from 'react-native-modal';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import {debounce} from 'lodash';
+import {APIPlaceAutocomplete} from '../utils';
+import Prediction from './Prediction';
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -35,12 +38,40 @@ const Input = styled(TextInput)`
   padding: 10px;
 `;
 
+const Predictions = styled.View`
+  margin-bottom: 20px;
+`;
+
 export default function SearchAddressModal({
   isModalVisible,
   toggleModal,
   newAddress,
   setNewAddress,
+  currentPlace,
 }) {
+  const [predictions, setPredictions] = useState([]);
+
+  useEffect(() => {
+    if (newAddress) {
+      debounceSearch(newAddress);
+    } else {
+      setPredictions([]);
+    }
+  }, [newAddress, debounceSearch]);
+
+  const debounceSearch = useCallback(
+    debounce(address => {
+      APIPlaceAutocomplete(address, currentPlace)
+        .then(results => {
+          setPredictions(results.predictions);
+        })
+        .catch(e => console.warn(e));
+    }, 1000),
+    [],
+  );
+
+  const renderPredictions = ({item}) => <Prediction {...item} />;
+
   return (
     <Modal
       isVisible={isModalVisible}
@@ -70,6 +101,15 @@ export default function SearchAddressModal({
             </ClearDestinationButton>
           </SearchContainer>
         </ModalChildrenView>
+        <Predictions>
+          {predictions.length > 0 && (
+            <FlatList
+              data={predictions}
+              renderItem={renderPredictions}
+              keyExtractor={item => item.place_id}
+            />
+          )}
+        </Predictions>
       </Container>
     </Modal>
   );
