@@ -96,6 +96,7 @@ export default function BookingInformation() {
         toggleModal={togglePlaceModal}
         newAddress={newAddress}
         setNewAddress={setNewAddress}
+        currentPlace={currentPlace}
       />
     </>
   );
