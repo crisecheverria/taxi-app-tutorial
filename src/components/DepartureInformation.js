@@ -33,7 +33,7 @@ const TextBold = styled.Text`
   margin-left: 5px;
 `;
 
-export default function DepartureInformation() {
+export default function DepartureInformation({toggleShowBookingViews}) {
   const {
     place: {currentPlace},
   } = usePlace();
@@ -52,7 +52,7 @@ export default function DepartureInformation() {
 
       <BookNow>
         <BookNowButton
-          onPress={() => console.log('pressed')}
+          onPress={toggleShowBookingViews}
           testID="book-now-button">
           <ButtonText>Book now</ButtonText>
         </BookNowButton>
