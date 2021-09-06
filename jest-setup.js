@@ -40,3 +40,5 @@ jest.mock('react-native-maps', () => {
 jest.mock('react-native-permissions', () =>
   require('react-native-permissions/mock'),
 );
+
+require('jest-fetch-mock').enableMocks();
