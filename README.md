@@ -6,4 +6,4 @@ We’re going to dive into Unit Testing our entire app using Jest + React Testin
 
 We will use AWS with Amplify for authentication, database, and AppSync for GraphQL API for the back-end.
 
-You can find the Step by Step tutorial [here](https://cristianecheverria.com/blog/post28/)
+You can find the Step by Step tutorial [here](https://cristianecheverria.com/post28/)
