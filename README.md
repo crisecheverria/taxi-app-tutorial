@@ -1,3 +1,7 @@
+# This project is no longer maintained (it never was).
+
+Im planing to build a new version of this app using Expo and AWS Amplify. Stay tuned for updates.
+
 # React Native Taxi App 🚕
 
 In this tutorial, we will build a Taxi App for both iOS & Android using React Native CLI.
